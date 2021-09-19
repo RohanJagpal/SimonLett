@@ -1,0 +1,4 @@
+discord.py
+pywin32
+youtube_dl
+python-dotenv
