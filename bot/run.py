@@ -12,9 +12,9 @@ load_dotenv()
 #INITIAL_EXTENTIONS = ["emails", "twitter"]
 INITIAL_EXTENTIONS = []
 UPDATE_CHANNEL = 887933735004176414
-GREETING_TRIGGERS = [
+GREETING_TRIGGERS = {
     "hello", "hi", "yo"
-]
+}
 GREETINGS = [
     "Stop socialising! Get back to studying :face_with_symbols_over_mouth:",
     "Hello! Hope the A-Levels are going well :D",
