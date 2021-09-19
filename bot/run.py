@@ -9,24 +9,23 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-#initial_extensions = ["emails", "twitter"]
+#INITIAL_EXTENTIONS = ["emails", "twitter"]
+INITIAL_EXTENTIONS = []
 UPDATE_CHANNEL = 887933735004176414
-initial_extensions = []
-greeting_triggers = [
+GREETING_TRIGGERS = [
     "hello", "hi", "yo"
 ]
-greetings = [
+GREETINGS = [
     "Stop socialising! Get back to studying :face_with_symbols_over_mouth:",
     "Hello! Hope the A-Levels are going well :D",
-    "",
     "You just posted cringe",
     "ur expelled nerd"
 ]
 bot = commands.Bot('gh!')
 
 if __name__ == "__main__":
-    for extension in initial_extensions:
-        bot.load_extension(extension)
+    for ext in INITIAL_EXTENTIONS:
+        bot.load_extension(ext)
 
 @bot.event
 async def on_ready():
@@ -58,9 +57,9 @@ async def on_ready():
 
 @bot.event
 async def on_message(ctx):
-    if ctx.content.lower() in greeting_triggers:
-        if random.randint(1,5) == random.randint(1,5):
-            await ctx.channel.send(greetings[random.randint(0,len(greetings)-1)])
+    if (ctx.content.lower() in GREETING_TRIGGERS and
+        random.randint(0,4) == 0):
+            await ctx.channel.send(random.choice(GREETINGS))
 
     await bot.process_commands(ctx)
     
