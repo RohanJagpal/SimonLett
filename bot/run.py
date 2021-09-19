@@ -1,10 +1,8 @@
 import os
 import discord
 from discord.enums import ActivityType
-from discord.ext import commands#, tasks
-#import win32com.client
+from discord.ext import commands
 import random
-#import youtube_dl
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -35,25 +33,6 @@ async def on_ready():
         type=ActivityType.watching
     )
     await bot.change_presence(activity=activity, status=discord.Status.online)
-    #await bot.get_channel(887930860463083564).send('im mad u r all epexelled :rage:')
-    """
-    outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-    inbox = outlook.GetDefaultFolder(6)
-    messages = inbox.Items
-    email = None
-    messageIter = 0
-    while email == None:
-        message = messages[messageIter]
-        if str(message.Sender) == "Simon Lett":
-            email = message
-        messageIter += 1
-    if email == None:
-        return
-    body_content = email.body
-    print(body_content)
-    upd_channel = await bot.get_channel(UPDATE_CHANNEL)
-    if body_content != upd_channel.lastmessage.content:
-        await upd_channel.send(body_content)"""
 
 @bot.event
 async def on_message(ctx):
