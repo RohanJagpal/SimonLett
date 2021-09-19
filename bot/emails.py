@@ -1,9 +1,10 @@
 from discord.ext import commands
 
+
 class Emails(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
+
     def read_messages(self):
         # This function will read messages from the inbox and return any relevant, unprocessed messages
 
