@@ -1,34 +1,59 @@
-from discord.ext import commands
+from discord.ext import commands, tasks
+from imap_tools import MailBox, AND
+from bs4 import BeautifulSoup as BS
+from io import StringIO
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+
+# THIS CODE REQUIRES A RULE TO BE SET IN OUTLOOK:
+# If message was sent to Students Intake 2020, COPY to Bot folder
 
 
 class Emails(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.user = os.environ.get("USER")
+        self.password = os.environ.get("PASSWORD")
 
-    def read_messages(self):
-        # This function will read messages from the inbox and return any relevant, unprocessed messages
+    def _read_mail(self, user, password):
+        mb = MailBox("mail.greenhead.ac.uk").login(user, password)
 
-        # The below code is the original code from run.py
-        # This code will need to be adapted or completely re-written, it is simply here for reference
-        # The win32com library cannot be used, as it reads the local windows user's outlook details
-        # The hosted environment will not have this user set, therefore an alternative method needs to be found
-        """
-        outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-        inbox = outlook.GetDefaultFolder(6)
-        messages = inbox.Items
-        email = None
-        messageIter = 0
-        while email == None:
-            message = messages[messageIter]
-            if str(message.Sender) == "Simon Lett":
-                email = message
-            messageIter += 1
-        if email == None:
-            return
-        body_content = email.body
-        print(body_content)
-        upd_channel = await bot.get_channel(UPDATE_CHANNEL)
-        if body_content != upd_channel.lastmessage.content:
-            await upd_channel.send(body_content)"""
+        # Move to the Bot folder, creates it if not present
+        if not mb.folder.exists("INBOX/Bot"):
+            mb.folder.create("INBOX/Bot")
 
-        pass
+        mb.folder.set("INBOX/Bot")
+
+        # Fetch emails in the folder
+        msgs = mb.fetch()
+
+        for msg in msgs:
+            # Emails are recieved in html, so translate it into plaintext
+            temp_text = BS(msg.html, "html.parser").get_text()
+            # Remove unnecessary blank lines
+            text = ""
+            for line in temp_text.splitlines():
+                if line != "":
+                    text += line + "\n"
+
+            # Deal with attachments
+            atts = []
+            for att in msg.attachments:
+                # Convert each attatchment to a file
+                atts.append(StringIO(att.part.get_payload()))
+            # Delete the message from Bot folder
+            mb.delete(msg.uid)
+            yield (msg.subject, text, atts)
+
+        mb.logout()
+
+    @tasks.loop(minutes=5)
+    def send_main(self):
+        for sub, text, atts in _read_mail(self.user, self.password):
+            # Get the College updates channel
+            channel = bot.get_channel(887933735004176414)
+
+            channel.send("**" + sub + "**\n" + text, files=atts)
