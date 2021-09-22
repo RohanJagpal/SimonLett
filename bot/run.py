@@ -7,8 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# INITIAL_EXTENTIONS = ["emails", "twitter"]
-INITIAL_EXTENTIONS = []
+INITIAL_EXTENTIONS = ["Emails"]
 UPDATE_CHANNEL = 887933735004176414
 GREETING_TRIGGERS = {"hello", "hi", "yo"}
 GREETINGS = [
