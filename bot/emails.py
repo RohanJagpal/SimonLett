@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup as BS
 from io import BytesIO
 from dotenv import load_dotenv
 import os
-import time
 
 load_dotenv()
 
