@@ -1,9 +1,11 @@
+import discord
 from discord.ext import commands, tasks
 from imap_tools import MailBox, AND
 from bs4 import BeautifulSoup as BS
-from io import StringIO
+from io import BytesIO
 from dotenv import load_dotenv
 import os
+import time
 
 load_dotenv()
 
@@ -18,8 +20,8 @@ class Emails(commands.Cog):
         self.user = os.environ.get("USER")
         self.password = os.environ.get("PASSWORD")
 
-    def _read_mail(self, user, password):
-        mb = MailBox("mail.greenhead.ac.uk").login(user, password)
+    async def _read_mail(self):
+        mb = MailBox("outlook.office365.com").login(self.user, self.password)
 
         # Move to the Bot folder, creates it if not present
         if not mb.folder.exists("INBOX/Bot"):
@@ -43,7 +45,7 @@ class Emails(commands.Cog):
             atts = []
             for att in msg.attachments:
                 # Convert each attatchment to a file
-                atts.append(StringIO(att.part.get_payload()))
+                atts.append(discord.File(BytesIO(att.payload), att.filename))
             # Delete the message from Bot folder
             mb.delete(msg.uid)
             yield (msg.subject, text, atts)
@@ -51,9 +53,18 @@ class Emails(commands.Cog):
         mb.logout()
 
     @tasks.loop(minutes=5)
-    def send_main(self):
-        for sub, text, atts in _read_mail(self.user, self.password):
-            # Get the College updates channel
-            channel = bot.get_channel(887933735004176414)
+    async def send_main(self):
+        channel = self.bot.get_channel(887933735004176414)  # college-updates
+        async for sub, text, atts in self._read_mail():
+            em = discord.Embed(title=sub, description=text)
+            await channel.send(embed=em, files=atts)
 
-            channel.send("**" + sub + "**\n" + text, files=atts)
+    @commands.Cog.listener()
+    async def on_ready(self):
+        """Start the send_main task when the bot has connected"""
+        if not self.send_main.is_running():
+            self.send_main.start()
+
+
+def setup(bot):
+    bot.add_cog(Emails(bot))

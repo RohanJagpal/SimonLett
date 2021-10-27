@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-INITIAL_EXTENTIONS = ["Emails"]
+INITIAL_EXTENTIONS = ["emails"]
 UPDATE_CHANNEL = 887933735004176414
 GREETING_TRIGGERS = {"hello", "hi", "yo"}
 GREETINGS = [
@@ -21,6 +21,7 @@ bot = commands.Bot("gh!")
 if __name__ == "__main__":
     for ext in INITIAL_EXTENTIONS:
         bot.load_extension(ext)
+        print(ext + " extension loaded")
 
 
 @bot.event
