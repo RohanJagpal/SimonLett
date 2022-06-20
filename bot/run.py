@@ -9,13 +9,19 @@ load_dotenv()
 
 INITIAL_EXTENTIONS = ["emails"]
 UPDATE_CHANNEL = 887933735004176414
-GREETING_TRIGGERS = {"hello", "hi", "yo"}
-GREETINGS = [
-    "Stop socialising! Get back to studying :face_with_symbols_over_mouth:",
-    "Hello! Hope the A-Levels are going well :D",
-    "You just posted cringe",
-    "ur expelled nerd",
-]
+
+# load greetings and triggers
+with open("greeting_triggers.txt") as f:
+    GREETING_TRIGGERS = set()
+    for i in f:
+        GREETING_TRIGGERS.add(i[:-1])
+
+with open("greetings.txt"):
+    GREETINGS = set()
+    for i in f:
+        GREETINGS.add(i[:-1])
+
+
 bot = commands.Bot("gh!")
 
 if __name__ == "__main__":
@@ -23,7 +29,9 @@ if __name__ == "__main__":
         bot.load_extension(ext)
         print(ext + " extension loaded")
 
+### Commands ###
 
+### Events ###
 @bot.event
 async def on_ready():
     print("Simon Lett has logged in and is ready to game!")
