@@ -11,15 +11,14 @@ INITIAL_EXTENTIONS = ["emails"]
 UPDATE_CHANNEL = 887933735004176414
 
 # load greetings and triggers
-with open("greeting_triggers.txt") as f:
+with open("data/triggers.txt") as f:
     GREETING_TRIGGERS = set()
-    for i in f:
-        GREETING_TRIGGERS.add(i[:-1])
+    GREETING_TRIGGERS.add(i.rstrip())
 
-with open("greetings.txt"):
+with open("data/greetings.txt"):
     GREETINGS = set()
     for i in f:
-        GREETINGS.add(i[:-1])
+        GREETINGS.add(i.rstrip())
 
 
 bot = commands.Bot("gh!")
