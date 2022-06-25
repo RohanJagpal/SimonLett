@@ -12,13 +12,10 @@ UPDATE_CHANNEL = 887933735004176414
 
 # load greetings and triggers
 with open("data/triggers.txt") as f:
-    GREETING_TRIGGERS = set()
-    GREETING_TRIGGERS.add(i.rstrip())
+    GREETING_TRIGGERS = [i.rstrip() for i in f]
 
-with open("data/greetings.txt"):
-    GREETINGS = set()
-    for i in f:
-        GREETINGS.add(i.rstrip())
+with open("data/greetings.txt") as f:
+    GREETINGS = [i.rstrip() for i in f]
 
 
 bot = commands.Bot("gh!")
